@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminDashboard() {
-  // جلب جميع المواعيد وترتيبها تنازلياً حسب تاريخ الإنشاء بشكل صحيح تماماً
   const appointments = await prisma.appointment.findMany({
     orderBy: {
       createdAt: 'desc',

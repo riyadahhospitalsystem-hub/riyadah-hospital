@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+// ----------------------------------------------------
+// 1. جدول الأقسام الطبية
+// ----------------------------------------------------
+model Department {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  image       String?
+  doctors     Doctor[]
+  createdAt   DateTime @default(now())
+}
+
+// ----------------------------------------------------
+// 2. جدول الأطباء
+// ----------------------------------------------------
+model Doctor {
+  id           String        @id @default(uuid())
+  name         String
+  specialty    String
+  bio          String?
+  image        String?
+  departmentId String
+  department   Department    @relation(fields: [departmentId], references: [id])
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+}
+
+// ----------------------------------------------------
+// 3. جدول المرضى
+// ----------------------------------------------------
+model Patient {
+  id           String        @id @default(uuid())
+  fullName     String
+  phone        String        @unique
+  nationalId   String?       @unique
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+}
+
+// ----------------------------------------------------
+// 4. جدول المواعيد
+// ----------------------------------------------------
+model Appointment {
+  id            String   @id @default(uuid())
+  date          DateTime
+  time          String
+  status        String   @default("PENDING")
+  paymentStatus String   @default("UNPAID")
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id])
+  createdAt     DateTime @default(now())
+}
